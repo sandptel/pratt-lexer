@@ -14,7 +14,7 @@ struct Lexer
     tokens: Vec<Token>
 }
 
-
+//tokenizer 
 impl Lexer
 {
     pub fn new(input:&str) -> Lexer
@@ -42,6 +42,48 @@ impl Lexer
 }
 
 
+fn expr(input:&str) -> S
+{
+    let mut lexer = Lexer::new(input);
+    expr_bp(&mut lexer)
+}
+
+fn expr_bp(lexer:&mut Lexer) -> S
+{
+let lhs = match lexer.next(){
+    Token::Atom(s)=> S::Atom(s),
+    t=> panic!("wrong input {:?}",t)
+};
+
+loop
+{
+    let op = match lexer.next()
+    {
+        Token::Atom(s)=> todo!(),
+        Token::Op(op)=> op,
+        Token::Eof => break ,
+    };
+    let (l_bp,r_bp) = infix_binding_power(op);
+
+}
+
+lhs
+
+}
+
+fn infix_binding_power(operator: char)->(u8,u8)
+{
+    match operator
+    {
+        '+' => (1,2),
+        '*' => (3,4),
+        '-' => todo!(),
+        '/' => todo!(),
+        _ => panic!("unidentified operator {}",operator)
+    }
+
+}
+
 enum S{
 Atom(char),
 Cons(char,Vec<S>)
@@ -63,19 +105,20 @@ impl fmt::Display for S
         }, 
         }
     }
-
 }
 
 fn main() {
     println!("{:?}",Lexer::new("3+4+4+4+5+6").peek());
 }
 
-mod tests
-{
-    use std::fmt;
-
-    // fn test_Lexer()
-    // {
-    //     assert_eq!()
-    // }
+#[test]
+fn test1() {
+    let s = expr("1 + 2 * 3");
+    assert_eq!(s.to_string(), "(+ 1 (* 2 3))")
 }
+#[test]
+fn test2() {
+    let s = expr("1"); 
+    assert_eq!(s.to_string(), "1");
+}
+
